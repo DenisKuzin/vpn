@@ -1,6 +1,5 @@
 ---
-- include: distupgrade.yml
-#- include: haveged.yml
-#- include: strongswan.yml
-#- include: add_vpn_client.yml
-#- include: sysctl.yml
+- import_tasks: haveged.yml
+- import_tasks: strongswan.yml
+- import_tasks: add_vpn_client.yml
+- import_tasks: sysctl.yml
