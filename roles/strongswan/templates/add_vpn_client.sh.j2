@@ -2,7 +2,7 @@
 cd {{ keys_dir }}
 ipsec pki --gen --type rsa --size 2048 --outform der > private/$1_key.der
 chmod 600 private/$1_key.der
-ipsec pki --pub --in private/$1_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C=DE, O=Noname, CN=$1@localhost" --san "$1@localhost" --outform der > certs/$1_cert.der
+ipsec pki --pub --in private/$1_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C=DE, O=Noname, CN=$1@{{ inventory_hostname }}" --san "$1@{{ inventory_hostname }}" --outform der > certs/$1_cert.der
 openssl rsa -inform DER -in private/$1_key.der -out private/$1_key.pem -outform PEM
 chmod 600 private/$1_key.pem
 openssl x509 -inform DER -in certs/$1_cert.der -out certs/$1_cert.pem -outform PEM

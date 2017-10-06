@@ -1,4 +1,9 @@
 ---
+- name: install iptables-save
+  apt:
+    update_cache: yes
+    state: installed
+    name: iptables-persistent
 - name: disable ufw
   systemd:
     name: ufw
