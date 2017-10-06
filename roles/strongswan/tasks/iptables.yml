@@ -1,0 +1,42 @@
+---
+- name: disable ufw
+  systemd:
+    name: ufw
+    enabled: no
+    state: stopped
+- name: accept all input
+  shell: iptables -P INPUT ACCEPT
+- name: accept all forward
+  shell: iptables -P FORWARD ACCEPT
+- name: flush all tables
+  shell: iptables -F
+- name: zero counters
+  shell: iptables -Z
+- name: accept traffic from established connections
+  shell: iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+- name: accept ssh
+  shell: iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+- name: accept loopback
+  shell: iptables -A INPUT -i lo -j ACCEPT
+- name: accept ipsec
+  shell: iptables -A INPUT -p udp --dport 500 -j ACCEPT
+- name: accept ipsec
+  shell: iptables -A INPUT -p udp --dport 4500 -j ACCEPT
+- name: accept forward esp
+  shell: iptables -A FORWARD --match policy --pol ipsec --dir in  --proto esp -s {{ vpn_subnet }} -j ACCEPT
+- name: accept forward esp
+  shell: iptables -A FORWARD --match policy --pol ipsec --dir out --proto esp -d {{ vpn_subnet }} -j ACCEPT
+- name: postrouting
+  shell: iptables -t nat -A POSTROUTING -s {{ vpn_subnet }} -o ens3 -m policy --pol ipsec --dir out -j ACCEPT
+- name: nat
+  shell: iptables -t nat -A POSTROUTING -s {{ vpn_subnet }} -o ens3 -j MASQUERADE
+- name: mss
+  shell: iptables -t mangle -A FORWARD --match policy --pol ipsec --dir in -s {{ vpn_subnet }} -o ens3 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
+- name: drop unknown input
+  shell: iptables -A INPUT -j DROP
+- name: drop unknown forward
+  shell: iptables -A FORWARD -j DROP
+- name: save rules
+  shell: netfilter-persistent save
+- name: apply rules
+  shell: netfilter-persistent reload

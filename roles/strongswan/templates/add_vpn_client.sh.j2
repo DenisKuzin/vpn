@@ -1,0 +1,8 @@
+#!/bin/bash
+cd {{ keys_dir }}
+ipsec pki --gen --type rsa --size 2048 --outform der > private/$1_key.der
+chmod 600 private/$1_key.der
+ipsec pki --pub --in private/$1_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C=DE, O=Noname, CN=$1@localhost" --san "$1@localhost" --outform der > certs/$1_cert.der
+openssl rsa -inform DER -in private/$1_key.der -out private/$1_key.pem -outform PEM
+openssl x509 -inform DER -in certs/$1_cert.der -out certs/$1_cert.pem -outform PEM
+openssl pkcs12 -export -inkey private/$1_key.pem -in certs/$1_cert.pem -name "$1 VPN Certificate" -certfile cacerts/ca_cert.pem -caname "Noname Root CA" -out p12/$1.p12

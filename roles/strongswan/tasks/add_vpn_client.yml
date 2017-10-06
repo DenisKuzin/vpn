@@ -1,0 +1,8 @@
+---
+- name: add_vpn_client.sh
+  template:
+    src: templates/add_vpn_client.sh.j2
+    dest: /usr/local/bin/add_vpn_client.sh
+    owner: root
+    group: root
+    mode: 0700

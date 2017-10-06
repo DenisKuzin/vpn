@@ -1,0 +1,5 @@
+---
+- hosts: servers
+  roles:
+    - strongswan
+  remote_user: root

@@ -1,0 +1,6 @@
+---
+- include: distupgrade.yml
+#- include: haveged.yml
+#- include: strongswan.yml
+#- include: add_vpn_client.yml
+#- include: sysctl.yml

@@ -1,0 +1,11 @@
+---
+- name: install haveged
+  apt:
+    update_cache: yes
+    name: haveged
+    
+- name: enable haveged at boot
+  systemd:
+    name: haveged
+    enabled: yes
+    state: started

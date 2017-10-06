@@ -1,0 +1,97 @@
+---
+- name: install strongSwan
+  apt:
+    update_cache: yes
+    name: {{ item }}
+    with_items:
+      strongswan
+      strongswan-plugin-af-alg
+      strongswan-plugin-agent
+      strongswan-plugin-certexpire
+      strongswan-plugin-coupling
+      strongswan-plugin-curl
+      strongswan-plugin-dhcp
+      strongswan-plugin-duplicheck
+      strongswan-plugin-eap-aka
+      strongswan-plugin-eap-aka-3gpp2
+      strongswan-plugin-eap-dynamic
+      strongswan-plugin-eap-gtc
+      strongswan-plugin-eap-mschapv2
+      strongswan-plugin-eap-peap
+      strongswan-plugin-eap-radius
+      strongswan-plugin-eap-tls
+      strongswan-plugin-eap-ttls
+      strongswan-plugin-error-notify
+      strongswan-plugin-farp
+      strongswan-plugin-fips-prf
+      strongswan-plugin-gcrypt
+      strongswan-plugin-gmp
+      strongswan-plugin-ipseckey
+      strongswan-plugin-kernel-libipsec
+      strongswan-plugin-ldap
+      strongswan-plugin-led
+      strongswan-plugin-load-tester
+      strongswan-plugin-lookip
+      strongswan-plugin-ntru
+      strongswan-plugin-pgp
+      strongswan-plugin-pkcs11
+      strongswan-plugin-pubkey
+      strongswan-plugin-radattr
+      strongswan-plugin-sshkey
+      strongswan-plugin-systime-fix
+      strongswan-plugin-whitelist
+      strongswan-plugin-xauth-eap
+      strongswan-plugin-xauth-generic
+      strongswan-plugin-xauth-noauth
+      strongswan-plugin-xauth-pam
+- name: create p12 dir
+  file:
+    path: {{ keys_dir }}/p12
+    state: directory
+- name: create ca private key
+  shell: ipsec pki --gen --type rsa --size 4096 --outform der > private/ca_key.der
+  args:
+    chdir: {{ keys_dir }}
+    creates: private/ca_key.der
+- name: only root can access ca_key
+  file:
+    path: {{ keys_dir }}/private/ca_key.der
+    mode: 0600
+- name: create ca certificate
+  shell: ipsec pki --self --ca --lifetime 3650 --in private/ca_key.der --type rsa --dn "C=DE, O=Noname, CN=Noname Root CA" --outform der > cacerts/ca_cert.der
+  args:
+    chdir: {{ keys_dir }}
+    creates: cacerts/ca_cert.der
+- name: convert ca certificate
+  shell: openssl x509 -inform DER -in cacerts/ca_cert.der -out cacerts/ca_cert.pem -outform PEM
+  args:
+    chdir: {{ keys_dir }}
+    creates: cacerts/ca_cert.pem
+- name: create server private key
+  shell: ipsec pki --gen --type rsa --size 4096 --outform der > private/server_key.der
+  args:
+    chdir: {{ keys_dir }}
+    creates: private/server_key.der
+- name: only root can access server_key
+  file:
+    path: {{ keys_dir }}/private/server_key.der
+    mode: 0600
+- name: issue server certificate
+  shell: ipsec pki --pub --in private/server_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C=DE, O=Noname, CN={{ inventory_hostname }}" --san {{ inventory_hostname }} --flag serverAuth --flag ikeIntermediate --outform der > certs/server_cert.der
+  args:
+    chdir: {{ keys_dir }}
+    creates: certs/server_cert.der
+- name: ipsec.secrets
+  template:
+    src: templates/ipsec.secrets.j2
+    dest: /etc/ipsec.secrets
+    owner: root
+    group: root
+    mode: 0600
+- name: ipsec.conf
+  template:
+    src: templates/ipsec.conf.j2
+    dest: /etc/ipsec.conf
+    owner: root
+    group: root
+    mode: 0644
