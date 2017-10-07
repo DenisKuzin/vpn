@@ -1,5 +1,5 @@
 # vpn
-ipsec ike
+IPsec IKEv2 strongSwan
 
 # Example of client config
 ```
