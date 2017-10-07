@@ -2,7 +2,7 @@
 ipsec ike
 
 # Example of client config
-
+```
 config setup
     charondebug="ike 2, knl 2, cfg 2, net 2, esp 2, dmn 2,  mgr 2"
     uniqueids=no
@@ -24,3 +24,4 @@ conn vultr
     auto=start
     forceencaps=yes
     fragmentation=yes
+```
