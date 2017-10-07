@@ -1,2 +1,4 @@
 ---
 # handlers file for strongswan
+- name: restart ipsec
+  shell: ipsec restart
