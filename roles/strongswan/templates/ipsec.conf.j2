@@ -13,7 +13,7 @@ conn %default
     dpdaction=clear
     dpddelay=300s
     authby=pubkey
-    left=%any
+    left={{ inventory_hostname }}
     leftid={{ inventory_hostname }}
     leftsubnet=0.0.0.0/0
     leftcert=server_cert.der
