@@ -3,11 +3,14 @@ IPsec IKEv2 strongSwan
 
 # server
 1) add ip address of server to inventory file ("vpn/production")
-2) ssh-copy-id to that server, so ansible can execute remove commands
-3) Install ansible on you dev host/laptop
+2) ssh-copy-id to that server, so ansible can execute remote commands
+3) install ansible on you dev host/laptop
 Ubuntu/Debian: apt-get install ansible
 macos: brew install ansible
 4) clone this repo and run "ansible-playbook --inventory-file production site.yml"
+
+# client
+docs and client for android: https://strongswan.org/
 
 # Example of client config
 ```
