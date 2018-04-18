@@ -1,13 +1,21 @@
 # vpn
 IPsec IKEv2 strongSwan
 
+# server
+1) add ip address of server to inventory file ("vpn/production")
+2) ssh-copy-id to that server, so ansible can execute remove commands
+3) Install ansible on you dev host/laptop
+Ubuntu/Debian: apt-get install ansible
+macos: brew install ansible
+4) clone this repo and run "ansible-playbook --inventory-file production site.yml"
+
 # Example of client config
 ```
 config setup
     charondebug="ike 2, knl 2, cfg 2, net 2, esp 2, dmn 2,  mgr 2"
     uniqueids=no
 
-conn vultr
+conn vpn
     keyexchange=ikev2
     ike=aes256-sha384-modp2048!
     esp=aes256-sha384-modp2048!
@@ -25,3 +33,6 @@ conn vultr
     forceencaps=yes
     fragmentation=yes
 ```
+
+# testing
+tested on ubuntu 16.04 server/client and ios clients
