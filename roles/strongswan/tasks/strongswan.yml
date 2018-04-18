@@ -58,7 +58,7 @@
     path: "{{ keys_dir }}/private/ca_key.der"
     mode: 0600
 - name: create ca certificate
-  shell: ipsec pki --self --ca --lifetime 3650 --in private/ca_key.der --type rsa --dn "C=DE, O=Noname, CN=Noname Root CA" --outform der > cacerts/ca_cert.der
+  shell: ipsec pki --self --ca --lifetime 3650 --in private/ca_key.der --type rsa --dn "C={{ country }}, O={{ organization }}, CN={{ organization }} Root CA" --outform der > cacerts/ca_cert.der
   args:
     chdir: "{{ keys_dir }}"
     creates: cacerts/ca_cert.der
@@ -77,7 +77,7 @@
     path: "{{ keys_dir }}/private/server_key.der"
     mode: 0600
 - name: issue server certificate
-  shell: 'ipsec pki --pub --in private/server_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C=DE, O=Noname, CN={{ inventory_hostname }}" --san "{{ inventory_hostname }}" --flag serverAuth --flag ikeIntermediate --outform der > certs/server_cert.der'
+  shell: 'ipsec pki --pub --in private/server_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C={{ country }}, O={{ organization }}, CN={{ inventory_hostname }}" --san "{{ inventory_hostname }}" --flag serverAuth --flag ikeIntermediate --outform der > certs/server_cert.der'
   args:
     chdir: "{{ keys_dir }}"
     creates: certs/server_cert.der
