@@ -1,4 +1,91 @@
-- name: copy sysctl.conf
-  copy:
-    src: sysctl.conf
-    dest: /etc/sysctl.conf
+- name: ipv4 all accept_redirects
+  sysctl:
+    name: net.ipv4.conf.all.accept_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv4 ens3 accept_redirects
+  sysctl:
+    name: net.ipv4.conf.ens3.accept_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv4 all send_redirects
+  sysctl:
+    name: net.ipv4.conf.all.send_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv4 ens3 send_redirects
+  sysctl:
+    name: net.ipv4.conf.ens3.send_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv4 disable source route
+  sysctl:
+    name: net.ipv4.conf.all.accept_source_route
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv6 all accept_redirects
+  sysctl:
+    name: net.ipv6.conf.all.accept_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv6 ens3 accept_redirects
+  sysctl:
+    name: net.ipv6.conf.ens3.accept_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv6 all send_redirects
+  sysctl:
+    name: net.ipv6.conf.all.send_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv6 ens3 send_redirects
+  sysctl:
+    name: net.ipv6.conf.ens3.send_redirects
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv6 disable source route
+  sysctl:
+    name: net.ipv6.conf.all.accept_source_route
+    value: 0
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv6 accept ra
+  sysctl:
+    name: net.ipv6.conf.all.accept_ra
+    value: 2
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv4 pmtu
+  sysctl:
+    name: net.ipv4.ip_no_pmtu_disc
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+- name: ipv4 bogus
+  sysctl:
+    name: net.ipv4.icmp_ignore_bogus_error_responses
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
