@@ -2,3 +2,6 @@
 # vars file for strongswan
 keys_dir: /etc/ipsec.d
 vpn_subnet: 172.16.1.0/24
+external_link: ens3
+country_code: DE
+organization: Noname

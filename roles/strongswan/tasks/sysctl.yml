@@ -5,9 +5,9 @@
     sysctl_set: yes
     state: present
     reload: yes
-- name: ipv4 ens3 accept_redirects
+- name: ipv4 {{ external_link }} accept_redirects
   sysctl:
-    name: net.ipv4.conf.ens3.accept_redirects
+    name: net.ipv4.conf.{{ external_link }}.accept_redirects
     value: 0
     sysctl_set: yes
     state: present
@@ -19,9 +19,9 @@
     sysctl_set: yes
     state: present
     reload: yes
-- name: ipv4 ens3 send_redirects
+- name: ipv4 {{ external_link }} send_redirects
   sysctl:
-    name: net.ipv4.conf.ens3.send_redirects
+    name: net.ipv4.conf.{{ external_link }}.send_redirects
     value: 0
     sysctl_set: yes
     state: present
@@ -40,9 +40,9 @@
     sysctl_set: yes
     state: present
     reload: yes
-- name: ipv6 ens3 accept_redirects
+- name: ipv6 {{ external_link }} accept_redirects
   sysctl:
-    name: net.ipv6.conf.ens3.accept_redirects
+    name: net.ipv6.conf.{{ external_link }}.accept_redirects
     value: 0
     sysctl_set: yes
     state: present
@@ -54,9 +54,9 @@
     sysctl_set: yes
     state: present
     reload: yes
-- name: ipv6 ens3 send_redirects
+- name: ipv6 {{ external_link }} send_redirects
   sysctl:
-    name: net.ipv6.conf.ens3.send_redirects
+    name: net.ipv6.conf.{{ external_link }}.send_redirects
     value: 0
     sysctl_set: yes
     state: present
