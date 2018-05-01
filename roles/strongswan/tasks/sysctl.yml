@@ -47,27 +47,13 @@
     sysctl_set: yes
     state: present
     reload: yes
-- name: ipv6 all send_redirects
-  sysctl:
-    name: net.ipv6.conf.all.send_redirects
-    value: 0
-    sysctl_set: yes
-    state: present
-    reload: yes
-- name: ipv6 {{ external_link }} send_redirects
-  sysctl:
-    name: net.ipv6.conf.{{ external_link }}.send_redirects
-    value: 0
-    sysctl_set: yes
-    state: present
-    reload: yes
 - name: ipv6 disable source route
   sysctl:
     name: net.ipv6.conf.all.accept_source_route
     value: 0
     sysctl_set: yes
     state: present
-    reload: yes
+    reload: yes   
 - name: ipv6 accept ra
   sysctl:
     name: net.ipv6.conf.all.accept_ra

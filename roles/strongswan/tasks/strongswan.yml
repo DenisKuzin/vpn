@@ -6,6 +6,9 @@
     name:
       - strongswan
       - strongswan-pki
+      - strongswan-swanctl
+      - strongswan-charon
+      - libcharon-extra-plugins
       - libstrongswan-extra-plugins
 - name: create p12 dir
   file:
