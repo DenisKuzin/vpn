@@ -1,6 +1,9 @@
 # vpn
 IPsec IKEv2 strongSwan
 
+# Install packages
+apt install strongswan-swanctl libstrongswan-extra-plugins charon-systemd
+
 # Example of client config
 ```
 config setup

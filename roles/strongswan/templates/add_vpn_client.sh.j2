@@ -2,8 +2,8 @@
 cd {{ keys_dir }}
 ipsec pki --gen --type rsa --size 2048 --outform der > private/$1_key.der
 chmod 600 private/$1_key.der
-ipsec pki --pub --in private/$1_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C={{ country_code }}, O={{ organization }}, CN=$1@{{ inventory_hostname }}" --san "$1@{{ inventory_hostname }}" --outform der > certs/$1_cert.der
+ipsec pki --pub --in private/$1_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert x509ca/ca_cert.der --cakey private/ca_key.der --dn "C={{ country_code }}, O={{ organization }}, CN=$1@{{ inventory_hostname }}" --san "$1@{{ inventory_hostname }}" --outform der > x509/$1_cert.der
 openssl rsa -inform DER -in private/$1_key.der -out private/$1_key.pem -outform PEM
 chmod 600 private/$1_key.pem
-openssl x509 -inform DER -in certs/$1_cert.der -out certs/$1_cert.pem -outform PEM
-openssl pkcs12 -export -inkey private/$1_key.pem -in certs/$1_cert.pem -name "$1 VPN Certificate" -certfile cacerts/ca_cert.pem -caname "{{ organization }} Root CA" -out p12/$1.p12
+openssl x509 -inform DER -in x509/$1_cert.der -out x509/$1_cert.pem -outform PEM
+openssl pkcs12 -export -inkey private/$1_key.pem -in x509/$1_cert.pem -name "$1 VPN Certificate" -certfile x509ca/ca_cert.pem -caname "{{ organization }} Root CA" -out pkcs12/$1.p12

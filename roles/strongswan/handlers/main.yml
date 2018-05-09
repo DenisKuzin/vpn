@@ -1,4 +1,7 @@
 ---
 # handlers file for strongswan
-- name: restart ipsec
-  shell: ipsec restart
+- name: restart strongswan-swanctl
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: strongswan-swanctl

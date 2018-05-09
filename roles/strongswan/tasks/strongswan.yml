@@ -4,16 +4,13 @@
     update_cache: yes
     state: present
     name:
+      - charon-systemd
       - strongswan
       - strongswan-pki
       - strongswan-swanctl
       - strongswan-charon
       - libcharon-extra-plugins
       - libstrongswan-extra-plugins
-- name: create p12 dir
-  file:
-    path: "{{ keys_dir }}/p12"
-    state: directory
 - name: create ca private key
   shell: ipsec pki --gen --type rsa --size 4096 --outform der > private/ca_key.der
   args:
@@ -24,15 +21,15 @@
     path: "{{ keys_dir }}/private/ca_key.der"
     mode: 0600
 - name: create ca certificate
-  shell: ipsec pki --self --ca --lifetime 3650 --in private/ca_key.der --type rsa --dn "C={{ country_code }}, O={{ organization }}, CN={{ organization }} Root CA" --outform der > cacerts/ca_cert.der
+  shell: ipsec pki --self --ca --lifetime 3650 --in private/ca_key.der --type rsa --dn "C={{ country_code }}, O={{ organization }}, CN={{ organization }} Root CA" --outform der > x509ca/ca_cert.der
   args:
     chdir: "{{ keys_dir }}"
-    creates: cacerts/ca_cert.der
+    creates: x509ca/ca_cert.der
 - name: convert ca certificate
-  shell: openssl x509 -inform DER -in cacerts/ca_cert.der -out cacerts/ca_cert.pem -outform PEM
+  shell: openssl x509 -inform DER -in x509ca/ca_cert.der -out x509ca/ca_cert.pem -outform PEM
   args:
     chdir: "{{ keys_dir }}"
-    creates: cacerts/ca_cert.pem
+    creates: x509ca/ca_cert.pem
 - name: create server private key
   shell: ipsec pki --gen --type rsa --size 4096 --outform der > private/server_key.der
   args:
@@ -43,23 +40,16 @@
     path: "{{ keys_dir }}/private/server_key.der"
     mode: 0600
 - name: issue server certificate
-  shell: 'ipsec pki --pub --in private/server_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert cacerts/ca_cert.der --cakey private/ca_key.der --dn "C={{ country_code }}, O={{ organization }}, CN={{ inventory_hostname }}" --san "{{ inventory_hostname }}" --flag serverAuth --flag ikeIntermediate --outform der > certs/server_cert.der'
+  shell: 'ipsec pki --pub --in private/server_key.der --type rsa | ipsec pki --issue --lifetime 730 --cacert x509ca/ca_cert.der --cakey private/ca_key.der --dn "C={{ country_code }}, O={{ organization }}, CN={{ inventory_hostname }}" --san "{{ inventory_hostname }}" --flag serverAuth --flag ikeIntermediate --outform der > x509/server_cert.der'
   args:
     chdir: "{{ keys_dir }}"
-    creates: certs/server_cert.der
-- name: ipsec.secrets
+    creates: x509/server_cert.der
+- name: gateway.conf
   template:
-    src: templates/ipsec.secrets.j2
-    dest: /etc/ipsec.secrets
-    owner: root
-    group: root
-    mode: 0600
-- name: ipsec.conf
-  template:
-    src: templates/ipsec.conf.j2
-    dest: /etc/ipsec.conf
+    src: templates/gateway.conf.j2
+    dest: /etc/swanctl/conf.d/gateway.conf
     owner: root
     group: root
     mode: 0644
   notify:
-    - restart ipsec
+    - restart strongswan-swanctl
